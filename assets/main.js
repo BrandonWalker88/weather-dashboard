@@ -35,14 +35,19 @@ $("#search").on("click", function (e) {
         currentDiv.append(currentHtml);
 
         //loop through response.daily 1-5 for rest of forecast
-        for (var i = 1; i < 6; i++) {
+        for (var i = 0; i < 5; i++) {
+          var dailyDate = moment
+            .unix(response.daily[i].dt)
+            .format("MM/DD/YYYY");
+          var dailyIcon = response.daily[i].weather[0].icon;
+          var dailyUrl =
+            "http://openweathermap.org/img/w/" + dailyIcon + ".png";
           var forecastHtml = `<div class="card" style="width: 18rem;">
             <div class="card-body">
-              <h5 class="card-title">${cityName}: ${currentDate} <img src=${iconUrl}></h5>
-              <p class="card-text">Temp: ${response.current.temp}</p>
-              <p class="card-text">Humidity: ${response.current.humidity}</p>
-              <p class="card-text">Wind Speed: ${response.current.wind_speed}</p>
-              <p class="card-text">UV Index: ${response.current.uvi}</p>
+              <h5 class="card-title">${dailyDate} <img src=${dailyUrl}></h5>
+              <p class="card-text">Temp: ${response.daily[i].temp.day}</p>
+              <p class="card-text">Humidity: ${response.daily[i].humidity}</p>
+
             </div>
           </div>`;
           forecastDiv.append(forecastHtml);
