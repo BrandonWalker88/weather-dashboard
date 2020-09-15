@@ -1,9 +1,23 @@
 var currentDiv = $("#current");
 var forecastDiv = $("#forecast");
+var searchCity = JSON.parse(localStorage.getItem("searchCity")) || [];
+function showCity() {
+  var searchRow = $("#searchRow");
 
+  for (var i = 0; i < searchCity.length; i++) {
+    var newSearch = `<div>
+    <div class="col-sm-8">
+      <button type="button" class="btn btn-light">${searchCity[i]}</button>
+    </div>
+  </div>`;
+    searchRow.append(newSearch);
+  }
+}
+showCity();
 $("#search").on("click", function (e) {
   var cityName = $("#cityName").val();
   var apiKey = "95ae9859ad872c7b453330fba02c0900";
+
   if (cityName) {
     var queryUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=imperial&appid=${apiKey}`;
     $.ajax({
@@ -11,7 +25,10 @@ $("#search").on("click", function (e) {
       method: "GET",
     }).then(function (res) {
       console.log(res);
-
+      var searchName = res.name;
+      searchCity.push(searchName);
+      localStorage.setItem("searchCity", JSON.stringify(searchCity));
+      console.log(searchName);
       var lat = res.coord.lat;
       var lon = res.coord.lon;
 
@@ -42,7 +59,7 @@ $("#search").on("click", function (e) {
           var dailyIcon = response.daily[i].weather[0].icon;
           var dailyUrl =
             "http://openweathermap.org/img/w/" + dailyIcon + ".png";
-          var forecastHtml = `<div class="card" style="width: 18rem;">
+          var forecastHtml = `<div class="card col">
             <div class="card-body">
               <h5 class="card-title">${dailyDate} <img src=${dailyUrl}></h5>
               <p class="card-text">Temp: ${response.daily[i].temp.day}</p>
